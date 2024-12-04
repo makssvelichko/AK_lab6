@@ -46,47 +46,47 @@ module_param(hello_count, uint, 0444);
 MODULE_PARM_DESC(hello_count, "The number of times to print 'Hello, world!'");
 
 struct hello_item {
-    struct list_head list;
-    ktime_t time;
+	struct list_head list;
+	ktime_t time;
 };
 
 static LIST_HEAD(hello_list);
 
 static int __init hello_init(void)
 {
-    int i;
-    struct hello_item *item;
+	int i;
+	struct hello_item *item;
 
-    if (hello_count == 0 || (hello_count >= 5 && hello_count <= 10)) {
-        pr_warn("Warning: hello_count is %u\n", hello_count);
-    } else if (hello_count > 10) {
-        BUG_ON(1);
-    }
+	if (hello_count == 0 || (hello_count >= 5 && hello_count <= 10)) {
+		pr_warn("Warning: hello_count is %u\n", hello_count);
+	} else if (hello_count > 10) {
+		BUG_ON(1);
+	}
 
-    for (i = 0; i < hello_count; i++) {
-        if (i == 5)
-            item = NULL;
-        else
-            item = kmalloc(sizeof(*item), GFP_KERNEL);
+	for (i = 0; i < hello_count; i++) {
+		if (i == 7)
+		item = NULL;
+		else
+		item = kmalloc(sizeof(*item), GFP_KERNEL);
 
-        BUG_ON(!item)
+		BUG_ON(!item)
    
-        item->time = ktime_get();
-        list_add(&item->list, &hello_list);
-        pr_info("Hello, world!\n");
-    }
-    return 0;
+		item->time = ktime_get();
+		list_add(&item->list, &hello_list);
+		pr_info("Hello, world!\n");
+		}
+	return 0;
 }
 
 static void __exit hello_exit(void)
 {
-    struct hello_item *item, *tmp;
+	struct hello_item *item, *tmp;
 
-    list_for_each_entry_safe(item, tmp, &hello_list, list) {
-        pr_info("Time: %lld ns\n", ktime_to_ns(item->time));
-        list_del(&item->list);
-        kfree(item);
-    }
+	list_for_each_entry_safe(item, tmp, &hello_list, list) {
+		pr_info("Time: %lld ns\n", ktime_to_ns(item->time));
+		list_del(&item->list);
+		kfree(item);
+	}
 }
 
 module_init(hello_init);
